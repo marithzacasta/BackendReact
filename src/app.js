@@ -12,10 +12,6 @@ app.use(express.json());
 app.set('port', process.env.PORT || 2000);
 
 // Endpoints
-app.get('/', (req, res) => {
-    res.send("hola");
-});
-
 app.use('/', ruta);
 
 export default app;
