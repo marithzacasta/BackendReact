@@ -1,6 +1,7 @@
-import { pool } from '../config/db.js'
+import { pool } from '../config/db.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken'
+import responses from '../messages/responses.js';
+import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 config();
 
@@ -8,13 +9,13 @@ export const listar = async (req, res) => {
 
     try {
         const data = await pool.query('CALL ListarUser();')
-        res.status(200).json({ message: data[0][0] })
+        responses.success(req, res, 200, data[0][0]);
 
     } catch (error) {
         // Se puede enviar info sensible CATCH
         // Enviar la traza a un servicio interno
-        console.error(error);
-        res.status(500).json({ message: 'Error al listar los usuarios' })
+        console.error('Error al lista usuarios', error.message || 'Error desconocido');
+        responses.error(req, res, 500, 'Error al listar los usuarios')
     }
 
 }
@@ -29,7 +30,7 @@ export const crearUser = async (req, res) => {
 
         // 1️⃣ Validar datos
         if (!name?.trim() || !email?.trim() || !emailRegex.test(email) || !password?.trim() || password.length < 6) {
-            return res.status(400).json({ message: "Datos inválidos" });
+           return responses.error(req, res, 400, 'Datos inválidos')
         }
 
         // 2️⃣ Encriptar contraseña
@@ -42,9 +43,9 @@ export const crearUser = async (req, res) => {
         // data[0].affectedRows ; es una propiedad que indica cuántas filas se vieron afectadas por la consulta SQL.
         // En este caso, se espera que sea 1 si la inserción fue exitosa. Si es 0, significa que no se insertó nada.
         if (data[0].affectedRows >= 1) {
-            return res.status(201).json({ message: 'Usuario creado correctamente' })
+            return responses.success(req, res, 201, 'Usuario creado correctamente')
         } else {
-            return res.status(400).json({ message: 'No se pudo añadir el usuario a la Tabla' })
+            return responses.error(req, res, 400, 'No se pudo añadir el usuario a la Tabla')
         };
 
     } catch (error) {
@@ -53,7 +54,7 @@ export const crearUser = async (req, res) => {
         // error.message ; es una propiedad del objeto Error en JavaScript. Contiene el mensaje de error específico que describe qué salió mal.
         // || 'Error desconocido' ; Esto evita que se muestre undefined en la consola si el error no tiene un mensaje.
         console.error('Error al crear usuario:', error.message || 'Error desconocido');
-        res.status(500).json({ message: 'Error al crear el usuario' })
+        responses.error(req, res, 500, 'Error al crear el usuario')
     }
 }
 
@@ -66,14 +67,14 @@ export const Login = async (req, res) => {
 
         // 1️⃣ Validación de datos
         if (!email?.trim() || !password?.trim()) {
-            return res.status(400).json({ message: "Email y contraseña son obligatorios" });
+            return responses.error(req, res, 400, 'Email y contraseña son obligatorios')
         }
 
         // 2️⃣ Buscar usuario en la base de datos
         const data = await pool.query('CALL Login(?)', [email]);
 
         if (data.length === 0) {
-            return res.status(404).json({ message: 'Usuario no existe' })
+            return responses.error(req, res, 404, 'Usuario no existe');
         }
 
         const hashPassword = data[0][0][0].hashed_password;
@@ -82,10 +83,12 @@ export const Login = async (req, res) => {
         // Compara la contraseña ingresada con la almacenada en la base de datos
         const match = await bcrypt.compare(password, hashPassword);
         if (!match) {
-            return res.status(400).json({ message: 'Contraseña incorrecta' });
+            return responses.error(req, res, 400, 'Contraseña incorrecta');
         }
 
         // 4️⃣ Generar token JWT
+        // El payload de un token es la información que tú decides guardar dentro del token 
+        // (es lo que se va a codificar y firmar).
         const payload = {
             id: data[0][0][0].id,
             name: data[0][0][0].names,
@@ -100,10 +103,10 @@ export const Login = async (req, res) => {
         );
 
         // 5️⃣ Responder con éxito
-        res.status(200).json({ message: 'Login exitoso', token });
+        responses.success(req, res, 200, 'Login exitoso', token)
 
     } catch (error) {
         console.error('Error al loguerase el usuario', error.message || 'Error desconocido')
-        res.status(500).json({ message: ' Error al loguearse el usuario' })
+        responses.error(req, res, 500, 'Error al loguearse el usuario')
     }
 }
