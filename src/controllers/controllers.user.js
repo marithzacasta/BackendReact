@@ -99,14 +99,18 @@ export const Login = async (req, res) => {
         const token = jwt.sign( 
             payload, // Payload
             process.env.JWT_SECRET, // Clave secreta
-            { expiresIn : process.env.JWT_EXPIRED} // Tiempo de expiración
+            { expiresIn : process.env.JWT_expired} // Tiempo de expiración
         );
 
         // 5️⃣ Responder con éxito
-        responses.success(req, res, 200, 'Login exitoso', token)
+        responses.success(req, res, 200, { token: token });
 
     } catch (error) {
         console.error('Error al loguerase el usuario', error.message || 'Error desconocido')
         responses.error(req, res, 500, 'Error al loguearse el usuario')
     }
 }
+
+export const validateToken = (req, res) => {
+    responses.success(req, res, 200, "El token es valido" );
+  };
