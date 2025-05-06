@@ -7,6 +7,6 @@ const routerUser = Router();
 routerUser.get('/listar', listar);
 routerUser.post('/crear', crearUser)
 routerUser.post('/login', Login)
-routerUser.post('/outh', verifyToken, validateToken);
+routerUser.post('/protected', verifyToken, validateToken);
 
 export default routerUser;

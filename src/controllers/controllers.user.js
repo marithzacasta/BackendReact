@@ -73,7 +73,7 @@ export const Login = async (req, res) => {
         // 2️⃣ Buscar usuario en la base de datos
         const data = await pool.query('CALL Login(?)', [email]);
 
-        if (data.length === 0) {
+        if (data[0][0].length === 0) {
             return responses.error(req, res, 404, 'Usuario no existe');
         }
 
@@ -102,8 +102,17 @@ export const Login = async (req, res) => {
             { expiresIn : process.env.JWT_expired} // Tiempo de expiración
         );
 
-        // 5️⃣ Responder con éxito
-        responses.success(req, res, 200, { token: token });
+        
+        // 5️⃣ Guardar token en cookie segura
+        res.cookie('access_token', token, {
+            httpOnly: true, // Solo accesible por HTTP (no JavaScript) la cookie solo se puede acceder desde el servidor, no desde el cliente.
+            secure: false, // process.env.NODE_ENV === 'production', // Solo se enviará por HTTPS (en producción)
+            sameSite: 'None', // 'Strict', // Solo se enviará en solicitudes del mismo sitio (previene CSRF) la ccokie solo se puede acceder en el mismo dominio
+            maxAge: 1000 * 60 * 60 // 1 hora de expiración.
+        });
+
+        // 6️⃣ Respuesta de éxito
+        responses.success(req, res, 200, 'Usuario logueado correctamente');
 
     } catch (error) {
         console.error('Error al loguerase el usuario', error.message || 'Error desconocido')
