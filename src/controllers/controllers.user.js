@@ -106,9 +106,9 @@ export const Login = async (req, res) => {
         // 5️⃣ Guardar token en cookie segura
         res.cookie('access_token', token, {
             httpOnly: true, // Solo accesible por HTTP (no JavaScript) la cookie solo se puede acceder desde el servidor, no desde el cliente.
-            secure: false, // process.env.NODE_ENV === 'production', // Solo se enviará por HTTPS (en producción)
-            sameSite: 'None', // 'Strict', // Solo se enviará en solicitudes del mismo sitio (previene CSRF) la ccokie solo se puede acceder en el mismo dominio
-            maxAge: 1000 * 60 * 60 // 1 hora de expiración.
+            secure: false, // PRODUCCION= true, // Solo se enviará por HTTPS (en producción)
+            sameSite: 'Lax', // PRODUCCION= 'None', // Solo se enviará en solicitudes del mismo sitio (previene CSRF) la ccokie solo se puede acceder en el mismo dominio
+            maxAge: 86400000 // 1 hora (en milisegundos) la cookie durará 1 hora
         });
 
         // 6️⃣ Respuesta de éxito
@@ -121,5 +121,5 @@ export const Login = async (req, res) => {
 }
 
 export const validateToken = (req, res) => {
-    responses.success(req, res, 200, "El token es valido" );
-  };
+    return responses.success(req, res, 200, "El token es valido" );
+};

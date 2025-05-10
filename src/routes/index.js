@@ -5,4 +5,5 @@ const ruta = Router();
 
 ruta.use('/api', routerUser)
 
+
 export default ruta;

@@ -4,10 +4,10 @@ import { config } from 'dotenv';
 config();
 
 export const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-
+    const token = req.cookies.access_token;
+    
     if (!token) {
-        responses.error(req, res, 401, 'Token no proporcionado');
+        return responses.error(req, res, 401, 'Token no proporcionado');
     }
 
     try {
@@ -15,9 +15,9 @@ export const verifyToken = (req, res, next) => {
         // Si el token es válido, se decodifica y se pasa a la request
         
         req.user = decoded; // Pasa los datos del token a la request
-        next(); // Llama al siguiente middleware o ruta
+        return next(); // Llama al siguiente middleware o ruta
         
     } catch (error) {
-        responses.error(req, res, 401, 'Token no válido');
+        return responses.error(req, res, 401, 'Token no válido');
     }
 }
