@@ -123,3 +123,8 @@ export const Login = async (req, res) => {
 export const validateToken = (req, res) => {
     return responses.success(req, res, 200, "El token es valido" );
 };
+
+export const logout = (req, res) => {
+    res.clearCookie('access_token'); // Elimina la cookie del token
+    return responses.success(req, res, 200, 'Sesión cerrada correctamente');
+}
