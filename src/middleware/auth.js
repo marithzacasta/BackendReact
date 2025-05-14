@@ -11,7 +11,7 @@ export const verifyToken = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET) // Verifica el token con la clave secreta
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS) // Verifica el token con la clave secreta
         // Si el token es válido, se decodifica y se pasa a la request
         
         req.user = decoded; // Pasa los datos del token a la request

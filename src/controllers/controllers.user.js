@@ -30,7 +30,7 @@ export const crearUser = async (req, res) => {
 
         // 1️⃣ Validar datos
         if (!name?.trim() || !email?.trim() || !emailRegex.test(email) || !password?.trim() || password.length < 6) {
-           return responses.error(req, res, 400, 'Datos inválidos')
+            return responses.error(req, res, 400, 'Datos inválidos')
         }
 
         // 2️⃣ Encriptar contraseña
@@ -96,20 +96,35 @@ export const Login = async (req, res) => {
         }
 
         // El JWT es codificado, NO encriptado.
-        const token = jwt.sign( 
-            payload, // Payload
-            process.env.JWT_SECRET, // Clave secreta
-            { expiresIn : process.env.JWT_expired} // Tiempo de expiración
+        // Generar Access Token (VENCER 15min)
+        const accessToken = jwt.sign(
+            payload,
+            process.env.JWT_SECRET_ACCESS, // Clave secreta
+            { expiresIn: process.env.JWT_EXPIRE_ACCESS || "15m", } // Tiempo de expiración
         );
 
-        
-        // 5️⃣ Guardar token en cookie segura
-        res.cookie('access_token', token, {
+        // Generar Refresh Token (VENACER 7 días)
+        const refreshToken = jwt.sign(
+            payload,
+            process.env.JWT_SECRET_REFRESH, // Clave secreta
+            { expiresIn: process.env.JWT_EXPIRE_REFRESH || "7d", } // Tiempo de expiración
+        );
+
+        // 5️⃣ Guardar tokens en cookies seguras
+        res.cookie("access_token", accessToken, {
+            httpOnly: true, // Solo accesible por HTTP (no JavaScript) la cookie solo se puede acceder desde el servidor, no desde el cliente.
+            secure: false, // cambia a true en producción con HTTPS
+            sameSite: "Lax", // PRODUCCION= 'None', // Solo se enviará en solicitudes del mismo sitio (previene CSRF) la ccokie solo se puede acceder en el mismo dominio.
+            maxAge: 15 * 60 * 1000, // 15 minutos
+        });
+
+        res.cookie("refresh_token", refreshToken, {
             httpOnly: true, // Solo accesible por HTTP (no JavaScript) la cookie solo se puede acceder desde el servidor, no desde el cliente.
             secure: false, // PRODUCCION= true, // Solo se enviará por HTTPS (en producción)
-            sameSite: 'Lax', // PRODUCCION= 'None', // Solo se enviará en solicitudes del mismo sitio (previene CSRF) la ccokie solo se puede acceder en el mismo dominio
-            maxAge: 86400000 // 1 hora (en milisegundos) la cookie durará 1 hora
+            sameSite: "Lax", // PRODUCCION= 'None', // Solo se enviará en solicitudes del mismo sitio (previene CSRF) la ccokie solo se puede acceder en el mismo dominio.
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
         });
+
 
         // 6️⃣ Respuesta de éxito
         responses.success(req, res, 200, 'Usuario logueado correctamente');
@@ -120,11 +135,43 @@ export const Login = async (req, res) => {
     }
 }
 
+export const refreshAccessToken = (req, res) => {
+    const refreshToken = req.cookies.refresh_token;
+
+    if (!refreshToken) {
+        return responses.error(req, res, 401, "No hay refresh token");
+    }
+
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH);
+
+        const newAccessToken = jwt.sign(
+            { id: decoded.id, name: decoded.name, email: decoded.email },
+            process.env.JWT_SECRET_REFRESH,
+            { expiresIn: process.env.JWT_EXPIRE_REFRESAH }
+        );
+
+        res.cookie("access_token", newAccessToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "Lax",
+            maxAge: 15 * 60 * 1000,
+        });
+
+        return responses.success(req, res, 200, "Access token renovado");
+        
+    } catch (err) {
+        return responses.error(req, res, 401, "Refresh token inválido");
+    }
+};
+
+
 export const validateToken = (req, res) => {
-    return responses.success(req, res, 200, "El token es valido" );
+    return responses.success(req, res, 200, "El token es valido");
 };
 
 export const logout = (req, res) => {
+    res.clearCookie('refresh_token'); // Elimina la cookie del refresh token
     res.clearCookie('access_token'); // Elimina la cookie del token
     return responses.success(req, res, 200, 'Sesión cerrada correctamente');
 }
