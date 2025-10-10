@@ -29,8 +29,9 @@ export const crearUser = async (req, res) => {
     try {
 
         // 1️⃣ Validar datos
-        if (!name?.trim() || !email?.trim() || !emailRegex.test(email) || !password?.trim() || password.length < 6) {
-            return responses.error(req, res, 400, 'Datos inválidos')
+        if (!name?.trim() || !email?.trim() || !emailRegex.test(email) || !password?.trim() || password.length < 5) {
+            return responses.error(req, res, 400, 'Datos inválidos' )
+            // 'Datos inválidos' || password.length < 5
         }
 
         // 2️⃣ Encriptar contraseña
@@ -77,8 +78,9 @@ export const Login = async (req, res) => {
             return responses.error(req, res, 404, 'Usuario no existe');
         }
 
-        const hashPassword = data[0][0][0].hashed_password;
-
+        const hashPassword = data[0][0][0].password;
+        
+        
         // 3️⃣ Comparar contraseñas encriptadas
         // Compara la contraseña ingresada con la almacenada en la base de datos
         const match = await bcrypt.compare(password, hashPassword);
@@ -130,7 +132,7 @@ export const Login = async (req, res) => {
         responses.success(req, res, 200, 'Usuario logueado correctamente');
 
     } catch (error) {
-        console.error('Error al loguerase el usuario', error.message || 'Error desconocido')
+        console.error('Error al loguerase el usuario', error.message  || 'Error desconocido')
         responses.error(req, res, 500, 'Error al loguearse el usuario')
     }
 }
