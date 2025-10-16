@@ -4,6 +4,7 @@
 Este backend fue desarrollado con **Node.js y Express** para practicar la creación de APIs, la autenticación de usuarios y la conexión con una **base de datos MySQL**.  
 Forma parte del proyecto **CineGalaxy**, que incluye un frontend en React.
 
+
 ## 🚀 Tecnologías utilizadas
 
 - **Node.js + Express**
@@ -15,6 +16,7 @@ Forma parte del proyecto **CineGalaxy**, que incluye un frontend en React.
 - **Cookie Parser**
 - **Morgan**
 - **Nodemon (dev)**
+
 
 ## 🧩 Funcionalidades principales
 
@@ -33,13 +35,32 @@ Forma parte del proyecto **CineGalaxy**, que incluye un frontend en React.
 
 ## 🗄️ Base de datos
 
-El proyecto utiliza MySQL Workbench para gestionar la base de datos.
+El proyecto utiliza MySQL como sistema de gestión de base de datos.
+
+📍 El script de creación y datos iniciales se encuentra en:
+
+src/database/manicure_users.sql
+
+💡 Para restaurar la base de datos:
+
+1️⃣ Abre MySQL Workbench.
+2️⃣ Conéctate a tu servidor local.
+3️⃣ Crea una base de datos llamada manicure.
+4️⃣ Importa el archivo SQL:
+
+Menú → Server → Data Import → Import from Self-Contained File
+
+Selecciona el archivo manicure_users.sql
+
+Da clic en Start Import
+
+Una vez importada, asegúrate de que las credenciales en el archivo .env coincidan con tu configuración local de MySQL.
 
 
-## ▶️ Ejecución
+## ▶️ Ejecución Localmente
 
 - Clonar el repositorio
-git clone https://github.com/tuusuario/cineapp-backend.git
+https://github.com/marithzacasta/BackendReact.git
 
 - Instalar dependencias
 npm install
@@ -48,21 +69,21 @@ npm install
 PORT = 4000
 
 DB_USER  = 'root'
-DB_PASSWORD = '123456789'
+DB_PASSWORD = tu_contraseña
 DB_HOST = 'localhost'
 DB_DATABASE = 'manicure'
 DB_PORT = 3306
 
-JWT_SECRET_ACCESS = wkdneoruq230r9y39inf
+JWT_SECRET_ACCESS = tu_clave_access
 JWT_EXPIRE_ACCESS = 1m
 
-JWT_SECRET_REFRESH = nhdblbOUe3i87y3t2728
+JWT_SECRET_REFRESH = tu_clave_refresh
 JWT_EXPIRE_REFRESH = 7d
 
-NODE_ENV = 'development'
 
 - Ejecutar el servidor
 npm run dev
+
 
 ## 🧠 Aprendizajes obtenidos
 
@@ -74,6 +95,7 @@ Conexión segura a bases de datos MySQL.
 
 Implementación de buenas prácticas en backend.
 
+
 ## 🧑‍💻 Desarrollado por
 
-- [marithzacast] Proyecto creado con fines educativos para practicar desarrollo backend con Node.js y MySQL.
+- [marithzacasta] Proyecto creado con fines educativos para practicar desarrollo backend con Node.js y MySQL.
