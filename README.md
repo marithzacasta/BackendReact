@@ -74,7 +74,6 @@ Conexión segura a bases de datos MySQL.
 
 Implementación de buenas prácticas en backend.
 
-
 ## 🧑‍💻 Desarrollado por
 
 - [marithzacast] Proyecto creado con fines educativos para practicar desarrollo backend con Node.js y MySQL.
