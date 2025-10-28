@@ -16,21 +16,18 @@ Forma parte del proyecto **CineGalaxy**, que incluye un frontend en React.
 - **Cookie Parser**
 - **Morgan**
 - **Nodemon (dev)**
+- **Swagger + swagger-autogen + swagger-ui-express**
 
 
 ## 🧩 Funcionalidades principales
 
 - Registro e inicio de sesión de usuarios.
-
 - Encriptación de contraseñas con Bcrypt.
-
 - Autenticación mediante JWT.
-
 - Conexión y consultas a MySQL.
-
 - Middleware de seguridad con CORS y cookie-parser.
-
 - Registro de peticiones HTTP con Morgan.
+- Documentación interactiva con Swagger.
 
 
 ## 🗄️ Base de datos
@@ -55,6 +52,31 @@ Selecciona el archivo manicure_users.sql
 Da clic en Start Import
 
 Una vez importada, asegúrate de que las credenciales en el archivo .env coincidan con tu configuración local de MySQL.
+
+
+## 🧾 Documentación con Swagger
+
+Este proyecto cuenta con documentación interactiva generada con Swagger usando swagger-autogen.
+
+📘 Archivos relacionados
+
+- src/tools/swagger.js → Configuración para generar la documentación.
+- src/swagger-output.json → Archivo JSON generado automáticamente (subido al repositorio).
+- src/routes/index.js → Configuración de swagger-ui-express para servir la interfaz.
+
+▶️ Visualización
+
+Una vez que ejecutes el servidor, podrás acceder a la documentación desde:
+
+👉 http://localhost:4000/api-docs
+
+Ahí podrás:
+
+- Ver todas las rutas del backend.
+- Consultar parámetros y respuestas.
+- Probar endpoints directamente desde la interfaz Swagger.
+
+💡 El archivo swagger-output.json ya está incluido en el repositorio, por lo que no es necesario generarlo manualmente.
 
 
 ## ▶️ Ejecución Localmente
